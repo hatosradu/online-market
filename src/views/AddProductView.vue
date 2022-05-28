@@ -1,12 +1,12 @@
 <template>
    <v-container>
-     
+     add product
    </v-container>
 </template>
 
 <script>
 export default {
-  name: 'ProductsView',
+  name: 'AddProductView',
 
   components: {
   },
