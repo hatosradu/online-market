@@ -2,8 +2,15 @@ import { Product } from '../models/product'
 
 const DATABASE_URL = "https://online-market-a5a4b-default-rtdb.europe-west1.firebasedatabase.app/";
 
+
+
+
 let productService = {
-    state: null,
+    cart: [],
+
+    init() {
+        this.getCartItems();
+    },
 
     async getProducts() {
         let result = [];
@@ -14,7 +21,7 @@ let productService = {
         for (let [i, elem] of array) {
             result.push(new Product(i, elem));
         }
-        
+
         return result;
     },
 
@@ -36,9 +43,45 @@ let productService = {
 
     getProductsUrl() {
         return DATABASE_URL + "products/"
+    },
+
+    addProductToCart(product) {
+        let updated = false;
+        if (this.cart.length > 0) {
+            for (let index = 0; index < this.cart.length; index++) {
+                if (this.cart[index].cartProduct.id === product.id) {
+                    this.cart[index].count++;
+                    updated = true;
+                }
+            }
+
+            if (!updated) {
+                this.cart.push({ count: 1, cartProduct: product })
+            }
+        }
+        else {
+            console.log("cart has no elem")
+            this.cart.push({ count: 1, cartProduct: product })
+        }
+        this.setCartItems();
+    },
+
+    getCartProducts() {
+        this.getCartItems();
+        return this.cart;
+    },
+    getCartItems() {
+        if (localStorage.getItem("cart")) {
+            let jsonCart = JSON.parse(localStorage.getItem("cart"));
+            this.cart = jsonCart;
+            console.log(this.cart);
+        }
+    },
+
+    setCartItems() {
+        console.log(this.cart);
+        localStorage.setItem('cart', JSON.stringify(this.cart));
     }
 }
-
-
 
 export { productService };

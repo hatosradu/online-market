@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import AdminView from '../views/AdminView.vue'
-import AddProductView from '../views/AddProductView.vue'
+import CartView from '../views/CartView.vue'
 
 
 Vue.use(VueRouter)
@@ -17,11 +17,11 @@ const routes = [
     path: '/admin',
     name: 'Admin',
     component: AdminView
-  }, 
+  },
   {
-    path: '/addProductView',
-    name: 'AddProductView',
-    component: AddProductView
+    path: '/cart',
+    name: 'CartView',
+    component: CartView
   },
   {
     path: '/about',
@@ -47,7 +47,7 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/ProductDetailView.vue')
-  }
+  },
 ]
 
 const router = new VueRouter({

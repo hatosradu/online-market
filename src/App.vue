@@ -19,6 +19,12 @@
           </template>
         </v-menu>
       </div>
+      <v-badge :content="cartItemsCount" :value="cartItemsCount" color="green" overlap>
+        <v-btn icon text to="/cart" small>
+          <v-icon>mdi-cart</v-icon>
+        </v-btn>
+      </v-badge>
+
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" absolute right temporary>
@@ -30,17 +36,16 @@
         </v-list-item-group>
       </v-list>
 
-      <v-spacer></v-spacer>
-
     </v-navigation-drawer>
 
     <v-main>
-      <router-view />
+      <router-view @updateCart="onUpdateCart()" />
     </v-main>
   </v-app>
 </template>
 
 <script>
+import { productService } from './services/productService';
 
 export default {
   name: 'App',
@@ -66,6 +71,7 @@ export default {
     ],
     drawer: false,
     group: 0,
+    cartItemsCount: 0
   }),
   watch: {
     group() {
@@ -73,6 +79,28 @@ export default {
     },
   },
   mounted() {
+    this.onUpdateCart();
+
+    const { MongoClient, ServerApiVersion } = require('mongodb');
+    const uri = "mongodb+srv://online-market:Qcsdp1sDfLP7rRYm@onlinemarket.hf3spby.mongodb.net/?retryWrites=true&w=majority";
+    const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+    client.connect(err => {
+      const collection = client.db("online-market").collection("Products");
+      console.log(collection);
+
+      console.log(err);
+      // perform actions on the collection object
+      client.close();
+    });
+
+  },
+  methods: {
+    onUpdateCart() {
+      console.log("updated");
+
+      let cart = productService.getCartProducts();
+      this.cartItemsCount = cart.length;
+    }
   },
 };
 </script>
@@ -90,6 +118,7 @@ body {
   overflow-y: auto;
   margin-top: 60px;
 }
+
 
 body::-webkit-scrollbar {
   display: none;

@@ -17,7 +17,8 @@
                 <v-row justify="center">
                     <v-col cols="12" sm="12" md="7" class="product-images">
                         <v-carousel hide-delimiters>
-                            <v-carousel-item v-for="(item, i) in product.images" :key="i" :src="item.url"></v-carousel-item>
+                            <v-carousel-item v-for="(item, i) in product.images" :key="i" :src="item.url">
+                            </v-carousel-item>
                         </v-carousel>
                     </v-col>
 
@@ -37,8 +38,8 @@
                                 {{ product.price }}
                             </p>
                         </v-col>
-                        <v-col cols="12" class="text-center">
-                            <v-btn rounded color="primary" dark large>
+                        <v-col cols="12" class="text-center my-15">
+                            <v-btn rounded color="primary" dark large @click="onAddToCart()">
                                 Add to cart
                             </v-btn>
                         </v-col>
@@ -47,7 +48,7 @@
                 </v-row>
             </v-col>
 
-            <v-col cols="12">
+            <v-col cols="12" >
                 <v-col v-for="(item, i) in product.specification" :key="i">
                     <v-col cols="12" md="4">
 
@@ -88,7 +89,14 @@ export default {
           }
   */
 
-    }
+    },
+    methods: {
+        onAddToCart() {
+            console.log(this.product);
+            productService.addProductToCart(this.product);
+            this.$emit('updateCart')
+        }
+    },
 
 }
 </script>

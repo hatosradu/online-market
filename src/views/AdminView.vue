@@ -32,36 +32,41 @@
 
                                 <v-form ref="form" v-model="productForm.valid" lazy-validation class="pa-4">
                                     <v-row>
-                                        <v-col cols="12" sm="12" md="3" lg="3">
-                                            <v-text-field v-model="productForm.brand" :counter="10" label="Brand"
+
+                                        <v-col cols="12" sm="12" md="3" lg="3" v-if="productForm.product.productId">
+                                            <v-text-field v-model="productForm.product.productId" readonly label="Id" disabled
                                                 required></v-text-field>
                                         </v-col>
                                         <v-col cols="12" sm="12" md="3" lg="3">
-                                            <v-text-field v-model="productForm.productType" :counter="10"
+                                            <v-text-field v-model="productForm.product.brand" :counter="10" label="Brand"
+                                                required></v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" sm="12" md="3" lg="3">
+                                            <v-text-field v-model="productForm.product.productType" :counter="10"
                                                 label="Product Type" required></v-text-field>
                                         </v-col>
 
-                                        <v-col cols="12" sm="12" md="6" lg="6">
-                                            <v-text-field v-model="productForm.name" :counter="10" label="Product Name"
+                                        <v-col cols="12" sm="12" md="12" lg="12">
+                                            <v-text-field v-model="productForm.product.name" :counter="10" label="Product Name"
                                                 required></v-text-field>
                                         </v-col>
                                         <v-col cols="12" sm="12" md="2" lg="2">
-                                            <v-text-field v-model="productForm.price" prefix="$" label="Price" required>
+                                            <v-text-field v-model="productForm.product.price" prefix="$" label="Price" required>
                                             </v-text-field>
                                         </v-col>
                                         <v-col cols="12" sm="12" md="2" lg="2">
-                                            <v-text-field v-model="productForm.quantityOnStock" label="Quantity"
+                                            <v-text-field v-model="productForm.product.quantityOnStock" label="Quantity"
                                                 suffix="pcs" required></v-text-field>
                                         </v-col>
 
                                         <v-col cols="12">
-                                            <v-text-field v-model="productForm.description" :counter="250"
+                                            <v-text-field v-model="productForm.product.description" :counter="250"
                                                 label="Description" required></v-text-field>
                                         </v-col>
 
 
                                         <v-col cols="12">
-                                            <v-textarea v-model="productForm.longDescription" label="Long description">
+                                            <v-textarea v-model="productForm.product.longDescription" label="Long description">
                                             </v-textarea>
                                         </v-col>
 
@@ -73,7 +78,7 @@
                                         <v-col cols="12">
                                             <v-simple-table>
                                                 <template v-slot:top>
-                                                    <v-text-field v-model="productForm.imageUrl" label="Add image url"
+                                                    <v-text-field v-model="productForm.product.imageUrl" label="Add image url"
                                                         required append-icon="mdi-image-plus" single-line
                                                         @click:append="onAddImageUrl">
                                                     </v-text-field>
@@ -88,7 +93,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr v-for="( item, index) in productForm.images" :key="index">
+                                                        <tr v-for="( item, index) in productForm.product.images" :key="index">
                                                             <td>
                                                                 <v-checkbox v-model="item.primary"
                                                                     @click="onSetPrimaryUrl(index)">
@@ -140,6 +145,17 @@
                 </v-row>
             </v-toolbar>
         </template>
+
+        <template v-slot:[`item.actions`]="{ item }">
+            <v-icon small class="mr-2" @click="onEditItem(item)">
+                mdi-pencil
+            </v-icon>
+            <v-icon small @click="onDeleteItem(item)">
+                mdi-delete
+            </v-icon>
+        </template>
+
+
     </v-data-table>
 </template>
 
@@ -155,6 +171,7 @@ export default {
         sound: true,
         widgets: false,
         headers: [
+            { text: '', value: 'actions', sortable: false },
             {
                 text: 'Id',
                 align: 'start',
@@ -165,19 +182,23 @@ export default {
             { text: 'Name', value: 'name' },
             { text: 'Price', value: 'price' },
             { text: 'QuantityOnStock', value: 'quantityOnStock' },
-            { text: 'Description', value: 'description' },
+            { text: 'Description', value: 'description' }
         ],
         products: [],
         productForm: {
+            isEditMode: false,
             valid: true,
-            brand: '',
-            productType: '',
-            name: '',
-            price: 0,
-            description: '',
-            longDescription: '',
-            imageUrl: '',
-            images: []
+            product: {
+                productId: null,
+                brand: '',
+                productType: '',
+                name: '',
+                price: 0,
+                description: '',
+                longDescription: '',
+                imageUrl: '',
+                images: []
+            }
         },
     }),
     async mounted() {
@@ -185,7 +206,7 @@ export default {
     },
     methods: {
         onCloseForm() {
-            this.$refs.form.validate()
+            this.dialog = false;
         },
         validate() {
             this.$refs.form.validate()
@@ -217,9 +238,17 @@ export default {
         },
         async onFormSave() {
             console.log(this.productForm);
-            await productService.upsertProduct(this.productForm);
+            await productService.upsertProduct(this.productForm.product);
             this.dialog = false;
+        },
+
+        onEditItem(product) {
+            this.productForm.isEditMode = true;
+            this.productForm.product = product;
+            this.dialog = true;
         }
+
+
     }
 }
 </script>

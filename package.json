@@ -12,6 +12,7 @@
     "@vuelidate/validators": "^2.0.0-alpha.29",
     "core-js": "^3.8.3",
     "firebase": "^9.8.1",
+    "mongodb": "^4.6.0",
     "vue": "^2.6.14",
     "vue-router": "^3.5.1",
     "vuefire": "^2.2.5",
