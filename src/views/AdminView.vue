@@ -33,20 +33,20 @@
                                 <v-form ref="form" v-model="productForm.valid" lazy-validation class="pa-4">
                                     <v-row>
                                         <v-col cols="12" sm="12" md="3" lg="3">
-                                            <v-text-field v-model="productForm.brand" :counter="10" :rules="nameRules"
-                                                label="Brand" required></v-text-field>
+                                            <v-text-field v-model="productForm.brand" :counter="10" label="Brand"
+                                                required></v-text-field>
                                         </v-col>
                                         <v-col cols="12" sm="12" md="3" lg="3">
                                             <v-text-field v-model="productForm.productType" :counter="10"
-                                                :rules="nameRules" label="Product Type" required></v-text-field>
+                                                label="Product Type" required></v-text-field>
                                         </v-col>
 
                                         <v-col cols="12" sm="12" md="6" lg="6">
-                                            <v-text-field v-model="productForm.name" :counter="10" :rules="nameRules"
-                                                label="Product Name" required></v-text-field>
+                                            <v-text-field v-model="productForm.name" :counter="10" label="Product Name"
+                                                required></v-text-field>
                                         </v-col>
                                         <v-col cols="12" sm="12" md="2" lg="2">
-                                            <v-text-field v-model="productForm.Price" prefix="$" label="Price" required>
+                                            <v-text-field v-model="productForm.price" prefix="$" label="Price" required>
                                             </v-text-field>
                                         </v-col>
                                         <v-col cols="12" sm="12" md="2" lg="2">
@@ -56,7 +56,7 @@
 
                                         <v-col cols="12">
                                             <v-text-field v-model="productForm.description" :counter="250"
-                                                :rules="nameRules" label="Description" required></v-text-field>
+                                                label="Description" required></v-text-field>
                                         </v-col>
 
 
@@ -159,7 +159,7 @@ export default {
                 text: 'Id',
                 align: 'start',
                 sortable: true,
-                value: 'productId',
+                value: 'id',
             },
             { text: 'Brand', value: 'brand' },
             { text: 'Name', value: 'name' },
@@ -173,31 +173,12 @@ export default {
             brand: '',
             productType: '',
             name: '',
+            price: 0,
             description: '',
             longDescription: '',
             imageUrl: '',
             images: []
         },
-
-        valid: true,
-        name: '',
-        nameRules: [
-            v => !!v || 'Name is required',
-            v => (v && v.length <= 10) || 'Name must be less than 10 characters',
-        ],
-        email: '',
-        emailRules: [
-            v => !!v || 'E-mail is required',
-            v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
-        ],
-        select: null,
-        items: [
-            'Item 1',
-            'Item 2',
-            'Item 3',
-            'Item 4',
-        ],
-        checkbox: false,
     }),
     async mounted() {
         this.products = await productService.getProducts();
@@ -234,9 +215,10 @@ export default {
         onCopyToClipboard(index) {
             navigator.clipboard.writeText(this.productForm.images[index].url);
         },
-        async onFormSave(){
+        async onFormSave() {
             console.log(this.productForm);
             await productService.upsertProduct(this.productForm);
+            this.dialog = false;
         }
     }
 }
