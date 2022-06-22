@@ -45,14 +45,17 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .text-align-center {
     text-align: center;
     padding-top: 15px;
 }
 
+.v-image__image.v-image__image--cover {
+    background-size: contain;
+}
+
 .product-image {
-    max-width: 90%;
     height: 200px;
     margin: auto;
 }
