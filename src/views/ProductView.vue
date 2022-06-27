@@ -29,7 +29,8 @@
 
                     <v-col cols="12" v-if="product.quantityOnStock > 0">
                         <v-alert v-if="product.quantityOnStock > 0" dense text type="success">On stock</v-alert>
-                        <p style="text-align: center;color: red; font-size: 3em; font-weight: 700;">{{ product.price }} $</p>
+                        <p style="text-align: center;color: red; font-size: 3em; font-weight: 700;">{{ product.price }}
+                            $</p>
                     </v-col>
 
                     <v-col cols="12" v-else>
@@ -43,18 +44,15 @@
                             @click:append-outer="orderedQuantity++" @click:prepend="orderedQuantity--">
                         </v-text-field>
                     </v-col>
+
                     <v-col cols="12" class="text-center " v-if="product.quantityOnStock > 0">
                         <v-btn rounded color="primary" dark large @click="onAddToCart()">
                             Add to cart
                         </v-btn>
                     </v-col>
-                    <v-col cols="12">
-                        <p>
-                            {{ product.longDescription }}
-                        </p>
-                    </v-col>
-
-
+                </v-col>
+                <v-col cols="10">
+                    <div v-html="product.longDescription"></div>
                 </v-col>
             </v-row>
 
@@ -97,7 +95,6 @@ export default {
         },
         onProductInputChanged() {
             this.orderedQuantity = Number(this.orderedQuantity);
-            console.log(this.orderedQuantity);
             if (isNaN(this.orderedQuantity) && this.orderedQuantity === 0) {
                 this.orderedQuantity = 1;
             }
