@@ -9,13 +9,13 @@
             <v-col cols="2" align-self="center">
                 <v-dialog v-model="dialog.isActive" fullscreen hide-overlay transition="dialog-bottom-transition">
                     <template v-slot:activator="{ on, attrs }">
-                        <v-btn fab dark small color="indigo" v-bind="attrs" v-on="on">
+                        <v-btn fab dark small color="indigo" v-bind="attrs" v-on="on" @click="onOpenDialog()">
                             <v-icon dark>mdi-plus</v-icon>
                         </v-btn>
                     </template>
                     <v-card>
-                        <v-toolbar dark color="primary">                           
-                            <v-toolbar-title>Add new product</v-toolbar-title>                           
+                        <v-toolbar dark color="primary">
+                            <v-toolbar-title>Add new product</v-toolbar-title>
                         </v-toolbar>
 
                         <v-form ref="form" lazy-validation class="pa-4" v-if="dialog.product != null">
@@ -25,12 +25,12 @@
                                     </v-text-field>
                                 </v-col>
                                 <v-col cols="12" sm="12" md="3" lg="3">
-                                    <v-text-field v-model="dialog.product.brand" label="Brand" required>
-                                    </v-text-field>
+                                    <v-combobox :items="brands" item-text="brand" item-value="brand"
+                                        v-model="dialog.product.brand"></v-combobox>
                                 </v-col>
                                 <v-col cols="12" sm="12" md="3" lg="3">
-                                    <v-text-field v-model="dialog.product.productType" label="Product Type" required>
-                                    </v-text-field>
+                                    <v-combobox :items="productTypes" item-text="type" item-value="type"
+                                        v-model="dialog.product.productType"></v-combobox>
                                 </v-col>
                                 <v-col cols="12" sm="12" md="12" lg="12">
                                     <v-text-field v-model="dialog.product.name" label="Product Name" required>
@@ -65,10 +65,10 @@
                                             <v-row>
                                                 <v-col v-for="(item, index) in props.items" :key="item.name"
                                                     class="d-flex justify-center align-stretch" cols="6" sm="6" md="3"
-                                                    lg="3">
+                                                    lg="2">
                                                     <v-card>
                                                         <v-col cols="12">
-                                                            <v-img v-bind:src="item.url"></v-img>
+                                                            <v-img v-bind:src="item.url" class="product-image"></v-img>
                                                         </v-col>
                                                         <v-col cols="12" class="d-flex justify-space-around">
                                                             <v-icon v-if="item.primary" color="orange"
@@ -79,9 +79,8 @@
                                                                 <v-icon>mdi-star</v-icon>
                                                             </v-btn>
 
-                                                            <v-btn icon color="error">
-
-                                                                <v-icon @click="onDeleteImage(index)">
+                                                            <v-btn icon color="error" @click="onDeleteImage(index)">
+                                                                <v-icon>
                                                                     mdi-delete
                                                                 </v-icon>
                                                             </v-btn>
@@ -105,51 +104,29 @@
                 </v-dialog>
             </v-col>
             <v-col cols="12">
-                <v-simple-table height="300px">
-                    <template v-slot:default>
-                        <thead>
-                            <tr>
-                                <th class="text-center" style="width:120px;">
-
-                                </th>
-                                <th class="text-left">
-                                    Id
-                                </th>
-                                <th class="text-left">
-                                    Name
-                                </th>
-                                <th class="text-left">
-                                    Qty
-                                </th>
-                                <th class="text-left">
-                                    Price
-                                </th>
-                                <th style="width:max-content;">
-
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="item in products" :key="item.id">
-                                <td>
-                                    <v-icon class="mr-2" @click="onEditItem(item)">
-                                        mdi-pencil
-                                    </v-icon>
-                                    <v-icon @click="onDeleteItem(item)">
-                                        mdi-delete
-                                    </v-icon>
-                                </td>
-
-                                <td>{{ item.id }}</td>
-                                <td>{{ item.name }}</td>
-                                <td>{{ item.quantityOnStock }}</td>
-                                <td>$ {{ item.price }} </td>
-                                <td></td>
-
-                            </tr>
-                        </tbody>
+                <v-data-table dense :headers="headers" :items="products" :search="search" hide-default-footer>
+                    <template v-slot:item.quantityOnStock="{ item }">
+                        <v-icon v-if="item.quantityOnStock < 1" color="error">
+                            mdi-alert-circle
+                        </v-icon>
+                        {{ item.quantityOnStock }} pcs
                     </template>
-                </v-simple-table>
+
+                    <template v-slot:item.price="{ item }">
+                        {{ item.price }} $
+                    </template>
+
+                    <template v-slot:item.actions="{ item }">
+                        <v-icon class="mr-2" @click="onEditItem(item)">mdi-pencil</v-icon>
+                        <v-icon v-if="item.available" color="red" @click="onchangeProductValability(item, false)">
+                            mdi-delete
+                        </v-icon>
+                        <v-icon v-else-if="!item.available" color="success"
+                            @click="onchangeProductValability(item, true)">
+                            mdi-check
+                        </v-icon>
+                    </template>
+                </v-data-table>
             </v-col>
         </v-row>
     </v-container>
@@ -163,6 +140,16 @@ export default {
     data: () => ({
         search: '',
         products: [],
+        productTypes: [],
+        brands: [],
+        headers: [
+            { text: 'Id', value: 'id', sortable: false },
+            { text: 'Type', value: 'productType' },
+            { text: 'Name', value: 'name' },
+            { text: 'Qty', value: 'quantityOnStock', align: 'right' },
+            { text: 'Price $', value: 'price', align: 'right' },
+            { text: '', value: 'actions', sortable: false, width: '90px' }
+        ],
         dialog: {
             isActive: false,
             product: {
@@ -180,26 +167,47 @@ export default {
             isEdit: false
         }
     }),
+
     mounted() {
         this.getProducts();
+
     },
+
     methods: {
         async getProducts() {
-            this.products = await productService.getProducts();
+            let products = await productService.getProducts();
+            this.products = products.sort((a, b) => Number(a.available) - Number(b.available));
+        },
+
+        async onOpenDialog() {
+            this.getProductTypes();
+            this.getBrands();
+        },
+
+        async getProductTypes() {
+            this.productTypes = await productService.getProductTypes();
+        },
+
+        async getBrands() {
+            this.brands = await productService.getBrands();
         },
 
         getDefaultDialogProduct() {
             return {
-                brand: "",
-                description: "",
-                id: null,
-                imageUrl: "",
-                images: Array[0],
-                longDescription: "",
-                name: "",
-                price: 0,
-                productType: "",
-                quantityOnStock: 0
+                isActive: false,
+                product: {
+                    brand: "",
+                    description: "",
+                    id: null,
+                    imageUrl: "",
+                    images: [],
+                    longDescription: "",
+                    name: "",
+                    price: 0,
+                    productType: "",
+                    quantityOnStock: 0
+                },
+                isEdit: false
             };
         },
 
@@ -209,22 +217,32 @@ export default {
             this.dialog.isActive = true;
         },
 
-        onDeleteItem(product) {
-            this.deleteProduct(product);
+        async onchangeProductValability(item, value) {
+            if (!await productService.changeProductValability(item.id, value)) {
+                this.$emit('showSnackbarMessage', 'error', ` <strong>Failed to make product ${value ? "available" : "unavailable"}.</strong>`);
+            }
+            else {
+                item.available = value;
+            }
         },
 
         onAddImageURL() {
-            console.log(this.dialog.product.images);
+            let isPrimary = false;
             let array = [...this.dialog.product.images];
-            console.log(array);
-            array.push({ 'primary': false, 'url': this.dialog.product.imageUrl })
+            if (array.length === 0) {
+                isPrimary = true;
+            }
+
+            array.push({ 'primary': isPrimary, 'url': this.dialog.product.imageUrl })
             this.dialog.product.images = array;
+            this.dialog.product.imageUrl = '';
         },
 
         onChangePrimaryImage(index) {
             for (let item of this.dialog.product.images) {
                 item.primary = false;
             }
+
             this.dialog.product.images[index].primary = true;
         },
 
@@ -238,19 +256,57 @@ export default {
         },
 
         async onSave() {
+            if (!this.productTypes.some(e => e.type === this.dialog.product.productType)) {
+                if (!confirm(`The product type ${this.dialog.product.productType} does not exist in the database. Would you like to continue and add the product type to database?`)) {
+                    return;
+                }
+
+                await productService.addProductType(this.dialog.product.productType);
+            }
+
+            if (!this.brands.some(e => e.type === this.dialog.product.brand)) {
+                if (!confirm(`The product brand ${this.dialog.product.brand} does not exist in the database. Would you like to continue and add the brand to database?`)) {
+                    return;
+                }
+
+                await productService.addBrand(this.dialog.product.brand);
+            }
+
+            let message = '';
+            let success = true;
             if (this.dialog.isEdit) {
-                await productService.updateProduct(this.dialog.product.id, this.dialog.product);
+                if (await productService.updateProduct(this.dialog.product.id, this.dialog.product)) {
+                    message = 'Product updated successfully!'
+                } else {
+                    message = 'Failed to update product!';
+                    success = false;
+                }
             }
             else {
-                await productService.postProduct(this.dialog.product);
+                if (await productService.postProduct(this.dialog.product)) {
+                    message = 'Product added successfully!'
+                } else {
+                    message = 'Failed to add product!';
+                    success = false;
+                }
+            }
+
+            this.$emit('showSnackbarMessage', success ? 'info' : 'error', message);
+            if (success) {
+                this.dialog = this.getDefaultDialogProduct();
             }
         }
     }
 }
 </script>
 
-<style scoped>
-th {
-    width: auto;
+<style>
+.v-image__image.v-image__image--cover {
+    background-size: contain;
+}
+
+.product-image {
+    height: 200px;
+    margin: auto;
 }
 </style>

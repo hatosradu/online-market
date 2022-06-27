@@ -51,7 +51,6 @@ export default {
   methods: {
     getCartProductsCount() {
       let products = cartService.getCart();
-      console.log(products);
       if (products && products.length > 0) {
         this.cartProductsCount = products.length;
       } else {
@@ -69,9 +68,9 @@ export default {
     },
 
     updateCartCount() {
-      console.log("UpdateCartLength");
       this.getCartProductsCount();
     },
+    
     showSnackbarMessage(type, text) {
       this.snackbar.color = type === 'info' ? 'green' : 'red';
 

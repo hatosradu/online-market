@@ -11,6 +11,7 @@ export class Product {
             this.productType = '';
             this.quantityOnStock = 0;
             this.imageUrl = '';
+            this.available = false;
         } else {
             this.id = key;
             this.price = product.price;
@@ -24,6 +25,7 @@ export class Product {
             this.quantityOnStock = product.quantityOnStock;
             this.orderedQuantity = product.orderedQuantity ?? 1;
             this.imageUrl = '';
+            this.available = product.available;
         }
     }
 

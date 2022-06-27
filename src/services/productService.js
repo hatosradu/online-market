@@ -1,4 +1,7 @@
 import { Product } from '../models/Product'
+import { ProductPost } from '../models/ProductPost'
+import { ProductType } from '../models/ProductType';
+import { Brand } from '../models/Brand';
 
 const DATABASE_URL = "https://online-market-a5a4b-default-rtdb.europe-west1.firebasedatabase.app/";
 
@@ -31,11 +34,11 @@ export const productService = {
 
     async updateProductQuantityOnStock(id, quantity) {
         let product = await this.getProduct(id);
-        console.log({ product });
         let newStock = product.quantityOnStock - quantity;
         if (newStock < 0) {
             throw new Error('Negative stock error.')
         }
+
         return await fetch(DATABASE_URL + `products/${id}.json`, {
             method: 'PATCH',
             body: JSON.stringify({
@@ -43,13 +46,10 @@ export const productService = {
             }),
         }).then(response => {
             if (!response.ok) {
-                throw new Error('Network response was not OK');
+                return false;
             }
 
             return true;
-        }).catch(error => {
-            console.error('There has been a problem with your fetch operation:', error);
-            return false;
         });
     },
 
@@ -63,51 +63,102 @@ export const productService = {
                 price: product.price,
                 quantityOnStock: product.quantityOnStock,
                 description: product.description,
-                longDescroption: product.longDescroption,
+                longDescription: product.longDescription,
                 images: product.images,
             }),
         }).then(response => {
             if (!response.ok) {
-                throw new Error('Network response was not OK');
+                return false;
             }
 
             return true;
-        }).catch(error => {
-            console.error('There has been a problem with your fetch operation:', error);
-            return false;
         });
     },
 
     async postProduct(product) {
+        let body = new ProductPost(product);
         return await fetch(DATABASE_URL + `products/.json`, {
             method: 'POST',
-            body: JSON.stringify(product)
+            body: JSON.stringify(body)
         }).then(response => {
-            console.log(response);
             if (!response.ok) {
-                throw new Error('Network response was not OK');
+                return false;
             }
 
             return true;
-        }).catch(error => {
-            console.error('There has been a problem with your fetch operation:', error);
-            return false;
         });
     },
 
-    async deleteProduct(id) {
+    async changeProductValability(id, value) {
         return await fetch(DATABASE_URL + `products/${id}.json`, {
-            method: 'DELETE'
+            method: 'PATCH',
+            body: JSON.stringify({
+                available: value
+            }),
         }).then(response => {
-            console.log(response);
             if (!response.ok) {
-                throw new Error('Network response was not OK');
+                return false;
             }
 
             return true;
-        }).catch(error => {
-            console.error('There has been a problem with your fetch operation:', error);
-            return false;
+        });
+    },
+
+    async getProductTypes() {
+        let result = [];
+        let response = await fetch(DATABASE_URL + "productTypes/.json");
+        let jsonResponse = await response.json();
+        if (jsonResponse === null) {
+            return result;
+        }
+
+        let array = Object.entries(jsonResponse);
+        for (let [i, elem] of array) {
+            result.push(new ProductType(i, elem));
+        }
+
+        return result;
+    },
+
+    async addProductType(productType) {
+        return await fetch(DATABASE_URL + `productTypes/.json`, {
+            method: 'POST',
+            body: JSON.stringify(productType)
+        }).then(response => {
+            if (!response.ok) {
+                return false;
+            }
+
+            return true;
+        });
+    },
+
+    async getBrands() {
+        let result = [];
+        let response = await fetch(DATABASE_URL + "brands/.json");
+        let jsonResponse = await response.json();
+        if (jsonResponse === null) {
+            return result;
+        }
+
+        let array = Object.entries(jsonResponse);
+        for (let [i, elem] of array) {
+            result.push(new Brand(i, elem));
+        }
+
+        return result;
+    },
+
+    async addBrand(brand) {
+        return await fetch(DATABASE_URL + `brands/.json`, {
+            method: 'POST',
+            body: JSON.stringify(brand)
+        }).then(response => {
+            if (!response.ok) {
+                return false;
+            }
+
+            return true;
         });
     }
 }

@@ -1,4 +1,5 @@
 <template>
+    <!-- -->
     <v-container fuild>
         <v-row no-gutters>
             <v-col cols="12" md="7" sm="12">
@@ -129,14 +130,11 @@ export default {
             this.loading = true;
             if (await this.validateOrder()) {
                 Array.prototype.forEach.call(this.products, async prod => {
-                    console.log({ prod });
-                    if (!await productService.updateProductQuantityOnStock(prod.id, prod.orderedQuantity)) {
-                        console.log("Something went wrong with the order");
-                    }
-
+                    await productService.updateProductQuantityOnStock(prod.id, prod.orderedQuantity);
                     cartService.removeProductFromCart(prod.id);
                     this.getProducts();
                 });
+
                 this.redirect();
             }
 
@@ -169,6 +167,7 @@ export default {
 .cartImage {
     max-width: 60%;
     margin: auto;
+    margin: 5px 20px 30px 40px;
 }
 
 .v-list-item {
