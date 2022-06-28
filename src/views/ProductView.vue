@@ -46,7 +46,7 @@
                         <v-col cols="12" class="text-center" v-if="product.quantityOnStock > 0">
                             <v-text-field v-model="orderedQuantity" prepend-icon="mdi-minus" type="number"
                                 @input="onProductInputChanged()" append-outer-icon="mdi-plus" class="pa-0" single-line
-                                style="font-size:3em; line-height: 3em; height: auto; margin: auto;"
+                                style="font-size:3em; line-height: 3em; height: 1em; margin: auto;"
                                 @click:append-outer="orderedQuantity++" @click:prepend="orderedQuantity--">
                             </v-text-field>
                         </v-col>
@@ -133,10 +133,12 @@ export default {
     font-size: 0.8em;
     font-weight: 400;
     text-align: center;
+    min-height: 50px;
 }
 
 .v-text-field ::v-deep button {
     font-size: 0.8em;
+    margin-top: 30px;
 }
 
 ::v-deep input::-webkit-outer-spin-button,
