@@ -27,29 +27,35 @@
                         </p>
                     </v-col>
 
-                    <v-col cols="12" v-if="product.quantityOnStock > 0">
-                        <v-alert v-if="product.quantityOnStock > 0" dense text type="success">On stock</v-alert>
-                        <p style="text-align: center;color: red; font-size: 3em; font-weight: 700;">{{ product.price }}
-                            $</p>
+                    <v-col cols="12" v-if="!product.available">
+                        <v-alert dense text type="error">Product not available anymore!</v-alert>
                     </v-col>
+                    <v-row v-else>
+                        <v-col cols="12" v-if="product.quantityOnStock > 0">
+                            <v-alert v-if="product.quantityOnStock > 0" dense text type="success">On stock</v-alert>
+                            <p style="text-align: center;color: red; font-size: 3em; font-weight: 700;">{{ product.price
+                            }} $</p>
+                        </v-col>
 
-                    <v-col cols="12" v-else>
-                        <v-alert dense outlined type="error">Not on stock!</v-alert>
-                    </v-col>
+                        <v-col cols="12" v-else>
+                            <v-alert dense outlined type="error">Not on stock!</v-alert>
+                        </v-col>
 
-                    <v-col cols="12" class="text-center" v-if="product.quantityOnStock > 0">
-                        <v-text-field v-model="orderedQuantity" prepend-icon="mdi-minus" type="number"
-                            @input="onProductInputChanged()" append-outer-icon="mdi-plus" class="pa-0" single-line
-                            style="font-size:3em; line-height: 3em; height: auto; margin: auto;"
-                            @click:append-outer="orderedQuantity++" @click:prepend="orderedQuantity--">
-                        </v-text-field>
-                    </v-col>
+                        <v-col cols="12" class="text-center" v-if="product.quantityOnStock > 0">
+                            <v-text-field v-model="orderedQuantity" prepend-icon="mdi-minus" type="number"
+                                @input="onProductInputChanged()" append-outer-icon="mdi-plus" class="pa-0" single-line
+                                style="font-size:3em; line-height: 3em; height: auto; margin: auto;"
+                                @click:append-outer="orderedQuantity++" @click:prepend="orderedQuantity--">
+                            </v-text-field>
+                        </v-col>
 
-                    <v-col cols="12" class="text-center " v-if="product.quantityOnStock > 0">
-                        <v-btn rounded color="primary" dark large @click="onAddToCart()">
-                            Add to cart
-                        </v-btn>
-                    </v-col>
+                        <v-col cols="12" class="text-center " v-if="product.quantityOnStock > 0">
+                            <v-btn rounded color="primary" dark large @click="onAddToCart()">
+                                Add to cart
+                            </v-btn>
+                        </v-col>
+                    </v-row>
+
                 </v-col>
                 <v-col cols="10">
                     <div v-html="product.longDescription"></div>

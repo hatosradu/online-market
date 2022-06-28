@@ -121,9 +121,8 @@
                         <v-icon v-if="item.available" color="red" @click="onchangeProductValability(item, false)">
                             mdi-delete
                         </v-icon>
-                        <v-icon v-else-if="!item.available" color="success"
-                            @click="onchangeProductValability(item, true)">
-                            mdi-check
+                        <v-icon v-else-if="!item.available" color="info" @click="onchangeProductValability(item, true)">
+                            mdi-plus-circle
                         </v-icon>
                     </template>
                 </v-data-table>
@@ -145,6 +144,7 @@ export default {
         headers: [
             { text: 'Id', value: 'id', sortable: false },
             { text: 'Type', value: 'productType' },
+            { text: 'Brand', value: 'brand' },
             { text: 'Name', value: 'name' },
             { text: 'Qty', value: 'quantityOnStock', align: 'right' },
             { text: 'Price $', value: 'price', align: 'right' },
@@ -170,7 +170,6 @@ export default {
 
     mounted() {
         this.getProducts();
-
     },
 
     methods: {
@@ -212,7 +211,18 @@ export default {
         },
 
         onEditItem(product) {
-            this.dialog.product = product;
+            this.dialog.product = {
+                brand: product.brand,
+                description: product.description,
+                id: product.id,
+                imageUrl: product.imageUrl,
+                images: product.images,
+                longDescription: product.longDescription,
+                name: product.name,
+                price: product.price,
+                productType: product.productType,
+                quantityOnStock: product.quantityOnStock
+            };
             this.dialog.isEdit = true;
             this.dialog.isActive = true;
         },

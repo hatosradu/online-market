@@ -27,6 +27,7 @@ export class Product {
             this.imageUrl = '';
             this.available = product.available;
         }
+
     }
 
     getPrimaryImage(images) {

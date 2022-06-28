@@ -1,5 +1,5 @@
 <template>
-    <v-container fluid>
+    <v-container fluid>      
         <v-data-iterator :items="products" hide-default-footer>
             <template v-slot:default="props">
                 <v-row>
@@ -29,15 +29,19 @@ import { productService } from "../services/productService";
 export default {
     name: 'ProductsView',
     data: () => ({
-        products: []
+        products: [],
+        productTypes: [],
+        brands: []
     }),
     created() {
         this.getProducts();
     },
     methods: {
         async getProducts() {
-            this.products = await productService.getProducts();
+            let array = await productService.getProducts();
+            this.products = array.filter(prod => prod.available);
         },
+
         onProductClick(item) {
             this.$router.push('/product/' + item.id)
         }
