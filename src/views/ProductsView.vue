@@ -43,7 +43,7 @@ export default {
         },
 
         onProductClick(item) {
-            this.$router.push('/product/' + item.id)
+            this.$router.push('/product/' + item.id).catch(()=>{});
         }
     }
 }

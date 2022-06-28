@@ -28,7 +28,6 @@
                                     </v-col>
                                     <v-col cols="12">
                                         <v-divider></v-divider>
-
                                     </v-col>
                                     <v-col class="d-flex flex-row" cols="12" style="padding-top: 0px;">
                                         <v-btn icon large color="red" @click="onRemoveProduct(item.id, item.name)">
@@ -66,7 +65,6 @@
             </v-col>
         </v-row>
     </v-container>
-
 </template>
 
 <script>
@@ -80,10 +78,11 @@ export default {
         totalPrice: 0,
         loading: false
     }),
+
     created() {
         this.getProducts();
-
     },
+
     methods: {
         getProducts() {
             this.products = cartService.getCart();
@@ -115,6 +114,7 @@ export default {
             for (let product of this.products) {
                 product.orderedQuantity = Number(product.orderedQuantity);
             }
+
             this.updateTotalPrice();
             cartService.setCart(this.products);
         },
@@ -123,6 +123,7 @@ export default {
             if (confirm(`Are you sure you want to remove ${name} from your cart list?`)) {
                 cartService.removeProductFromCart(id);
                 this.getProducts();
+                this.$emit('updateCartCount');
             }
         },
 
@@ -142,20 +143,26 @@ export default {
         },
 
         async validateOrder() {
+            let isValid = true;
             for (let product of this.products) {
                 let dbProduct = await productService.getProduct(product.id);
                 if (dbProduct.quantityOnStock < product.orderedQuantity) {
-                    return false;
+                    isValid = false;
+                    product.orderedQuantity = dbProduct.quantityOnStock;
                 }
             }
 
-            return true;
+            if (!isValid) {
+                alert('Some products have been changed due to stock availability.');
+            }
+
+            return isValid;
         },
 
         redirect() {
             this.$emit('showSnackbarMessage', 'info', ` Order placed. Redirecting to main page.`);
             setTimeout(() => {
-                this.$router.push('/');
+                this.$router.push('/').catch(()=>{});
                 this.$emit('updateCartCount');
             }, 3000);
         }

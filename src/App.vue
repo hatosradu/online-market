@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-app-bar app color="white" dense>
-      <v-toolbar-title @click.stop="$router.push('/')">Online Market</v-toolbar-title>
+      <v-toolbar-title @click.stop="$router.push('/').catch(()=>{});">Online Market</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn icon @click="onOpenCart()" class="mx-2">
         <v-badge :content="cartProductsCount" :value="cartProductsCount" color="green" overlap>
@@ -9,7 +9,7 @@
         </v-badge>
       </v-btn>
 
-      <v-btn icon class="mx-2" @click.stop="$router.push('/admin')">
+      <v-btn icon class="mx-2" @click.stop="$router.push('/admin').catch(()=>{});">
         <v-icon>mdi-cog</v-icon>
       </v-btn>
     </v-app-bar>
@@ -60,7 +60,7 @@ export default {
 
     onOpenCart() {
       if (Number(this.cartProductsCount) > 0) {
-        this.$router.push('/cart');
+        this.$router.push('/cart').catch(()=>{});
       }
       else {
         this.showSnackbarMessage("info", "Your cart is empty");
