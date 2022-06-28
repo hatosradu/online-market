@@ -1,15 +1,9 @@
-# online-market-vue
 # e-store
 
 ## Project setup
 ```
-@@ -15,20 +15,5 @@ npm run serve
+npm run serve
 npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
 ```
 
 ### Customize configuration
