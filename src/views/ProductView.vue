@@ -32,13 +32,15 @@
                     </v-col>
                     <v-row v-else>
                         <v-col cols="12" v-if="product.quantityOnStock > 0">
-                            <v-alert v-if="product.quantityOnStock > 0" dense text type="success">On stock</v-alert>
+                            <v-alert v-if="product.quantityOnStock > 0" dense text type="success">On stock <span
+                                    style="float: right;"> {{ product.quantityOnStock }} pcs</span></v-alert>
                             <p style="text-align: center;color: red; font-size: 3em; font-weight: 700;">{{ product.price
                             }} $</p>
                         </v-col>
 
                         <v-col cols="12" v-else>
-                            <v-alert dense outlined type="error">Not on stock!</v-alert>
+                            <v-alert dense outlined type="error">Not on stock! <span style="float: right;">
+                                    {{ product.quantityOnStock }} pcs</span> </v-alert>
                         </v-col>
 
                         <v-col cols="12" class="text-center" v-if="product.quantityOnStock > 0">

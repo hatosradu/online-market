@@ -37,6 +37,9 @@
                                         <div class="card-product-price"> {{ Math.round(item.orderedQuantity * item.price
                                                 * 100) / 100
                                         }} $</div>
+                                        <v-btn class="mr-5" icon @click.stop="$router.push('/product/' + item.id).catch(() => { });">
+                                            <v-icon>mdi-eye</v-icon>
+                                        </v-btn>
                                     </v-col>
                                 </v-row>
                             </v-card>
@@ -162,7 +165,7 @@ export default {
         redirect() {
             this.$emit('showSnackbarMessage', 'info', ` Order placed. Redirecting to main page.`);
             setTimeout(() => {
-                this.$router.push('/').catch(()=>{});
+                this.$router.push('/').catch(() => { });
                 this.$emit('updateCartCount');
             }, 3000);
         }
@@ -174,7 +177,6 @@ export default {
 .cartImage {
     max-width: 60%;
     margin: auto;
-    margin: 5px 20px 30px 40px;
 }
 
 .v-list-item {
@@ -187,7 +189,7 @@ export default {
     line-height: 15px;
     font-size: 16px;
     margin-right: 20px;
-    margin-top: 5px;
+    margin-top: 10px;
 }
 </style>
 
